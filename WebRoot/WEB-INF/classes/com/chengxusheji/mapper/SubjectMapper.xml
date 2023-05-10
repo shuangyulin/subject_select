@@ -1,0 +1,50 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.SubjectMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加论文题目记录 -->
+	<insert id="addSubject" parameterType="subject">
+		insert into t_subject(subjectName,subjectTypeObj,sujectContent,taskFile,otherFile,personNum,teacherObj,addTime) values 
+		(#{subjectName},#{subjectTypeObj.typeId},#{sujectContent},#{taskFile},#{otherFile},#{personNum},#{teacherObj.teacherNo},#{addTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询论文题目记录 -->
+	<select id="querySubject" resultMap="subjectMap" >
+		select t_subject.* from t_subject,t_subjectType,t_teacher ${where} and t_subject.subjectTypeObj = t_subjectType.typeId and t_subject.teacherObj = t_teacher.teacherNo limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="subjectMap" type="subject">
+        <id property="subjectId" column="subjectId" />
+        <association property="subjectTypeObj" column="subjectTypeObj" select="com.chengxusheji.mapper.SubjectTypeMapper.getSubjectType" />
+        <association property="teacherObj" column="teacherObj" select="com.chengxusheji.mapper.TeacherMapper.getTeacher" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有论文题目记录 -->
+	<select id="querySubjectList" resultMap="subjectMap" >
+		select t_subject.* from t_subject,t_subjectType,t_teacher ${where} and t_subject.subjectTypeObj = t_subjectType.typeId and t_subject.teacherObj = t_teacher.teacherNo
+	</select>
+
+    <!-- 按照查询条件的论文题目记录数 -->
+	<select id="querySubjectCount" resultType="int">
+		select count(*) from t_subject,t_subjectType,t_teacher ${where} and t_subject.subjectTypeObj = t_subjectType.typeId and t_subject.teacherObj = t_teacher.teacherNo
+	</select>
+
+	<!-- 根据主键查询某个论文题目记录 -->
+	<select id="getSubject" parameterType="int" resultMap="subjectMap">
+		select * from t_subject where t_subject.subjectId = #{subjectId}
+	</select>
+
+	<!-- 更新论文题目记录 -->
+	<update id="updateSubject" parameterType="subject">
+		update t_subject set subjectName=#{subjectName},subjectTypeObj=#{subjectTypeObj.typeId},sujectContent=#{sujectContent},taskFile=#{taskFile},otherFile=#{otherFile},personNum=#{personNum},teacherObj=#{teacherObj.teacherNo},addTime=#{addTime} where subjectId = #{subjectId}
+	</update>
+
+	<!-- 删除论文题目记录 -->
+	<delete id="deleteSubject" parameterType="int">
+		delete from t_subject where subjectId=#{subjectId}
+	</delete>
+
+</mapper>

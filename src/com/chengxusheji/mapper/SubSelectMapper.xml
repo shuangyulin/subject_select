@@ -1,0 +1,50 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.SubSelectMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加学生选题记录 -->
+	<insert id="addSubSelect" parameterType="subSelect">
+		insert into t_subSelect(subjectObj,userObj,selectTime,shenHeState) values 
+		(#{subjectObj.subjectId},#{userObj.user_name},#{selectTime},#{shenHeState})
+	</insert>
+
+	<!-- 按照查询条件分页查询学生选题记录 -->
+	<select id="querySubSelect" resultMap="subSelectMap" >
+		select t_subSelect.* from t_subSelect,t_subject,t_userInfo ${where} and t_subSelect.subjectObj = t_subject.subjectId and t_subSelect.userObj = t_userInfo.user_name limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="subSelectMap" type="subSelect">
+        <id property="selectId" column="selectId" />
+        <association property="subjectObj" column="subjectObj" select="com.chengxusheji.mapper.SubjectMapper.getSubject" />
+        <association property="userObj" column="userObj" select="com.chengxusheji.mapper.UserInfoMapper.getUserInfo" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有学生选题记录 -->
+	<select id="querySubSelectList" resultMap="subSelectMap" >
+		select t_subSelect.* from t_subSelect,t_subject,t_userInfo ${where} and t_subSelect.subjectObj = t_subject.subjectId and t_subSelect.userObj = t_userInfo.user_name
+	</select>
+
+    <!-- 按照查询条件的学生选题记录数 -->
+	<select id="querySubSelectCount" resultType="int">
+		select count(*) from t_subSelect,t_subject,t_userInfo ${where} and t_subSelect.subjectObj = t_subject.subjectId and t_subSelect.userObj = t_userInfo.user_name
+	</select>
+
+	<!-- 根据主键查询某个学生选题记录 -->
+	<select id="getSubSelect" parameterType="int" resultMap="subSelectMap">
+		select * from t_subSelect where t_subSelect.selectId = #{selectId}
+	</select>
+
+	<!-- 更新学生选题记录 -->
+	<update id="updateSubSelect" parameterType="subSelect">
+		update t_subSelect set subjectObj=#{subjectObj.subjectId},userObj=#{userObj.user_name},selectTime=#{selectTime},shenHeState=#{shenHeState} where selectId = #{selectId}
+	</update>
+
+	<!-- 删除学生选题记录 -->
+	<delete id="deleteSubSelect" parameterType="int">
+		delete from t_subSelect where selectId=#{selectId}
+	</delete>
+
+</mapper>

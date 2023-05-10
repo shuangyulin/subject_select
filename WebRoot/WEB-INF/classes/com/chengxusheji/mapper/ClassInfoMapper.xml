@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ClassInfoMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加班级记录 -->
+	<insert id="addClassInfo" parameterType="classInfo">
+		insert into t_classInfo(classNo,className,college,specialName,bornDate,mainTeacher,classMemo) values 
+		(#{classNo},#{className},#{college},#{specialName},#{bornDate},#{mainTeacher},#{classMemo})
+	</insert>
+
+	<!-- 按照查询条件分页查询班级记录 -->
+	<select id="queryClassInfo" resultMap="classInfoMap" >
+		select t_classInfo.* from t_classInfo ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="classInfoMap" type="classInfo">
+        <id property="classNo" column="classNo" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有班级记录 -->
+	<select id="queryClassInfoList" resultMap="classInfoMap" >
+		select t_classInfo.* from t_classInfo ${where}
+	</select>
+
+    <!-- 按照查询条件的班级记录数 -->
+	<select id="queryClassInfoCount" resultType="int">
+		select count(*) from t_classInfo ${where}
+	</select>
+
+	<!-- 根据主键查询某个班级记录 -->
+	<select id="getClassInfo" parameterType="string" resultMap="classInfoMap">
+		select * from t_classInfo where t_classInfo.classNo = #{classNo}
+	</select>
+
+	<!-- 更新班级记录 -->
+	<update id="updateClassInfo" parameterType="classInfo">
+		update t_classInfo set className=#{className},college=#{college},specialName=#{specialName},bornDate=#{bornDate},mainTeacher=#{mainTeacher},classMemo=#{classMemo} where classNo = #{classNo}
+	</update>
+
+	<!-- 删除班级记录 -->
+	<delete id="deleteClassInfo" parameterType="string">
+		delete from t_classInfo where classNo=#{classNo}
+	</delete>
+
+</mapper>

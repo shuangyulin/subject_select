@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.SubjectTypeMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加题目类型记录 -->
+	<insert id="addSubjectType" parameterType="subjectType">
+		insert into t_subjectType(typeName) values 
+		(#{typeName})
+	</insert>
+
+	<!-- 按照查询条件分页查询题目类型记录 -->
+	<select id="querySubjectType" resultMap="subjectTypeMap" >
+		select t_subjectType.* from t_subjectType ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="subjectTypeMap" type="subjectType">
+        <id property="typeId" column="typeId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有题目类型记录 -->
+	<select id="querySubjectTypeList" resultMap="subjectTypeMap" >
+		select t_subjectType.* from t_subjectType ${where}
+	</select>
+
+    <!-- 按照查询条件的题目类型记录数 -->
+	<select id="querySubjectTypeCount" resultType="int">
+		select count(*) from t_subjectType ${where}
+	</select>
+
+	<!-- 根据主键查询某个题目类型记录 -->
+	<select id="getSubjectType" parameterType="int" resultMap="subjectTypeMap">
+		select * from t_subjectType where t_subjectType.typeId = #{typeId}
+	</select>
+
+	<!-- 更新题目类型记录 -->
+	<update id="updateSubjectType" parameterType="subjectType">
+		update t_subjectType set typeName=#{typeName} where typeId = #{typeId}
+	</update>
+
+	<!-- 删除题目类型记录 -->
+	<delete id="deleteSubjectType" parameterType="int">
+		delete from t_subjectType where typeId=#{typeId}
+	</delete>
+
+</mapper>
